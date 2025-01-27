@@ -97,6 +97,15 @@
         function startQuiz() {
             currentQuestion = 0;
             score = 0;
+            document.querySelector('.quiz-container').innerHTML = `
+                <h1>Bird Identification Quiz</h1>
+                <div id="question-count"></div>
+                <img class="bird-image" id="bird-img" src="" alt="Bird image">
+                <div class="options" id="options"></div>
+                <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+                <div id="result"></div>
+                <div class="score" id="score"></div>
+            `;
             showQuestion();
         }
 
