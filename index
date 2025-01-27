@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Identification Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .bird-image {
+            max-width: 400px;
+            max-height: 300px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .score {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .correct { background-color: #90EE90; }
+        .incorrect { background-color: #FFB6C1; }
+        #next-btn { display: none; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Bird Identification Quiz</h1>
+        <div id="question-count"></div>
+        <img class="bird-image" id="bird-img" src="" alt="Bird image">
+        <div class="options" id="options"></div>
+        <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+        <div id="result"></div>
+        <div class="score" id="score"></div>
+    </div>
+
+    <script>
+        const birds = [
+            {
+                question: "Which bird is this?",
+                img: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Golden_Eagle.jpg",
+                options: ["Bald Eagle", "Golden Eagle", "Red-tailed Hawk", "Osprey"],
+                correct: "Golden Eagle"
+            },
+            {
+                question: "Identify this colorful bird:",
+                img: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Peacock_India.jpg",
+                options: ["Peacock", "Macaw", "Flamingo", "Toucan"],
+                correct: "Peacock"
+            },
+            {
+                question: "What's the name of this bird?",
+                img: "https://upload.wikimedia.org/wikipedia/commons/4/45/Common_Kingfisher_%28Alcedo_atthis%29_crop.jpg",
+                options: ["Woodpecker", "Kingfisher", "Blue Jay", "Sparrow"],
+                correct: "Kingfisher"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const bird = birds[currentQuestion];
+            document.getElementById('bird-img').src = bird.img;
+            document.getElementById('question-count').textContent = 
+                `Question ${currentQuestion + 1} of ${birds.length}`;
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            bird.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsDiv.appendChild(button);
+            });
+
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('result').innerHTML = '';
+        }
+
+        function checkAnswer(selected) {
+            const correct = birds[currentQuestion].correct;
+            const buttons = document.querySelectorAll('#options button');
+            
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === correct) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selected) {
+                    button.classList.add('incorrect');
+                }
+            });
+
+            if (selected === correct) {
+                score++;
+                document.getElementById('result').innerHTML = 
+                    '<p style="color: green;">Correct! Well done!</p>';
+            } else {
+                document.getElementById('result').innerHTML = 
+                    `<p style="color: red;">Incorrect. The correct answer is ${correct}.</p>`;
+            }
+
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('score').textContent = `Score: ${score}/${birds.length}`;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < birds.length) {
+                showQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            document.querySelector('.quiz-container').innerHTML = `
+                <h1>Quiz Complete!</h1>
+                <p>Your final score: ${score}/${birds.length}</p>
+                <button onclick="startQuiz()">Try Again</button>
+            `;
+        }
+
+        // Start the quiz when page loads
+        startQuiz();
+    </script>
+</body>
+</html>
